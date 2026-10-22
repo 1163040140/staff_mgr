@@ -1,13 +1,18 @@
 package ec.backend.demo.interceptor;
 
+import ec.backend.demo.untils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 //登录拦截器
 @Component
+@RequiredArgsConstructor
 public class LoginInterceptor implements HandlerInterceptor {
+
+    private final JwtUtil jwtUtil;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -26,6 +31,7 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         // 3. 如果有 token，放行（练习阶段我们暂时不深入校验 token 的真伪）
+        jwtUtil.parseToken(token);
         return true;
     }
 }

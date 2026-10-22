@@ -20,7 +20,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 // 放行以下接口（千万别拦截它们，否则你没法登录，也看不了文档）
                 .excludePathPatterns(
-                        "/login/**",              // 你的登录接口路径
+                        "/api/auth/login/**",              // 你的登录接口路径
                         "/swagger-ui/**",         // Swagger 页面
                         "/v3/api-docs/**",        // Swagger 数据
                         "/error"                  // 默认错误页面
