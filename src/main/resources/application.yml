@@ -1,8 +1,9 @@
 spring:
   datasource:
+    # TODO: 迁移后请修改为宿主机/容器IP，例如 jdbc:mysql://localhost:3306/staff_mgr 或宿主机局域网IP
     url: jdbc:mysql://192.168.209.128:3306/staff_mgr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: remote_user
-    password: YourStrongPassword@123
+    username: root
+    password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       connection-timeout: 30000
@@ -11,9 +12,17 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: 192.168.209.128
       port: 6379
-      # password: 如果有密码则填写
+      password: ""  # 如有密码请填写
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 2000ms
 
 mybatis-plus:
   configuration:

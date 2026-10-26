@@ -1,5 +1,6 @@
 package ec.backend.demo.service;
 
+import ec.backend.demo.dto.UserDeptDTO;
 import ec.backend.demo.dto.UserPageQuery;
 import ec.backend.demo.entity.SysUser;
 import ec.backend.demo.mapper.UserMapper;
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService extends ServiceImpl<UserMapper, SysUser> {
 
+    @Autowired
+    private UserMapper userMapper;
+
     public Page<SysUser> getUserPage(int pageNum, int pageSize, String username, Integer status) {
         Page<SysUser> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
@@ -24,5 +28,10 @@ public class UserService extends ServiceImpl<UserMapper, SysUser> {
         }
         Page<SysUser> result = this.page(page, wrapper);
         return result;
+    }
+
+    public UserDeptDTO getUserWithDeptById(Long userId){
+        Page<UserDeptDTO> page = new Page<>();
+        return userMapper.getUserWithDeptById(userId);
     }
 }

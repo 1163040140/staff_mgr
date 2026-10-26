@@ -1,0 +1,78 @@
+# Docker Compose file for migrating MySQL and deploying Redis
+
+version: '3.8'
+
+# 数据库网络
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: staff_mgr_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: staff_mgr
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql_scripts:/docker-entrypoint-initdb.d/
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: staff_mgr_redis
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: ""
+      REDIS_DATABASE: 0
+    command: redis-server --requirepass "" --appendonly yes
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - app_network
+
+# 数据卷
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# 网络
+networks:
+  app_network:
+    driver: bridge
+
+# 使用说明
+# 1. 迁移步骤（运行前，请先备份VM上的MySQL）
+#    a. 在VM内运行导出命令到主机（或网络路径）
+#    b. 挂载导出脚本到sql_scripts目录
+#    c. 运行: docker-compose up -d mysql
+#    d. 等待MySQL初始化，自动导入数据
+
+# 2. 启动Redis
+#    运行: docker-compose up -d redis
+
+# 3. 修改staff_mgr项目的应用配置
+#    编辑src/main/resources/application.yml，修改MySQL URL为: jdbc:mysql://localhost:3306/staff_mgr
+#    确保Redis配置正确（默认为localhost:6379）
+
+# 4. 构建并运行spring-boot项目
+#    运行: mvn clean package
+#    运行: java -jar target/demo.jar
+
+# 5. 测试连接
+#    curl http://localhost:8080/api/test/mysql
+#    curl http://localhost:8080/api/test/redis
+
+# 注意事项
+# - Docker需要在VM内安装并运行
+# - 请确保宿主机/容器网络互通
+# - 根据实际环境修改密码和配置
+# - 生产环境请使用安全的密码并使用认证
