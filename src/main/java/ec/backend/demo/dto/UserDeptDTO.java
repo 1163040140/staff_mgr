@@ -4,10 +4,14 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Data
 @Getter
 @Setter
-public class UserDeptDTO {
+public class UserDeptDTO implements Serializable {
+    private static final long serialVersionUID = 1L; // 建议加上
+
     private Long id;
     private String username;
     private String realName;
